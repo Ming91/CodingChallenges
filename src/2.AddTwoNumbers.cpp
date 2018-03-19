@@ -28,12 +28,11 @@ class Solution {
             if (!res) {
                 res = new ListNode(sum % 10);
                 head = res;
-                carry = sum / 10;
             } else {
                 res->next = new ListNode(sum % 10);
                 res = res->next;
-                carry = sum / 10;
             }
+            carry = sum / 10;
             if (bl1 && bl2) {
                 if (!carry) break;
                 res->next = new ListNode(carry);
