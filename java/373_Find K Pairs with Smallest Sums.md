@@ -1,0 +1,113 @@
+反复思考，最大堆好像可行：
+	维护一个k大小的最大堆，新加入的sum比peek的小，则poll + offer
+	需要n * m循环，再 * log(k)维护堆操作
+	不如官方，但是应该想到的办法
+
+一个好的问题描述：
+```
+  1_1_2
+1|2 2 3
+1|2 2 3
+1|2 3 3
+```
+There is no easy way to figure out how to pick the top 5 min sums.
+The only option is to check (0,0), then (0,1) OR (1,0), and then (1,1), OR, maybe, it should be (0,2) or (2,0) ??? So we need to try all possible combinations sequentially. Here comes the BFS+min_heap from (0,0), which will return the smallest sum first.
+
+**beat 99% 的想法**
+基于如上的问题描述，先找合适的sum upper，用二分，从[0] + [0] 到[n - 1] + [m - 1]
+对于每个目前的targetSum，找有多少小于其的
+			怎么找？看上图，按行或列找，
+			例如按行，i=0第一行，j从0到m-1, 二分找，找到sum<=targetSum的最大j
+			记录目前的j为previousRight，因为下一行对应元素比目前行的大，所以下一行循环j不会超过
+			j从0到previousRight即可。(将prevRight初值设为m-1)
+			同时，每行的二分查找结束时，说明此行有prevRight个组合sum<=targetSum, 加和。
+回到外层的二分查找，看看此targetSum的count与k的关系，大了二分往左，小了二分往右，等了就退出
+
+最后，根据满足的targetSum找所有组合，
+先找严格小于的，
+再加等于的
+
+复杂度：一层二分log(max{sum}) 二层二分 min(n * log(m), k) 找结果min(n * m, k)
+
+官方的：O(min(k⋅logk,m⋅n⋅log(m⋅n)))
+
+// 简单的n*m加入hashmap不行，超时
+// 想early stop，比如记录heap中最大值，但是不好追踪
+// 两个heap? 一个最大，一个最小？ 好像还是不好操作
+// 若k较小，从n*m减少到k次循环的关键在于不断pop
+// public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+//         int n = nums1.length;
+//         int m = nums2.length;
+//         int topKSum = Integer.MIN_VALUE;
+//         int queueSize = 0;
+//         List<List<Integer>> ans = new ArrayList<>(k);
+//         Comparator comp = Comparator.comparing(
+//             (List<Integer> l) -> (l.get(0) + l.get(1))
+//         );
+//         Queue<List<Integer>> pq = new PriorityQueue<>(comp);
+//         n = n > k ? k : n;
+//         m = m > k ? k : m;
+//         for (int i = 0; i < n; i++) {
+//             for (int j = 0; j < m; j++) {
+//                 int sum = nums1[i] + nums2[j];
+//                 if (queueSize < k) {
+//                     pq.add(Arrays.asList(nums1[i], nums2[j]));
+//                     //System.out.println("not full" + nums1[i] + "," + nums2[j]);
+//                     if (topKSum < sum) {
+//                         topKSum = sum;
+//                     }
+//                     queueSize++;
+//                     continue;
+//                 }
+//                 if (topKSum > sum) {
+//                     pq.add(Arrays.asList(nums1[i], nums2[j]));
+//                     topKSum--;
+//                     //System.out.println(nums1[i] + "," + nums2[j]);
+//                 }
+//             }
+//         }
+//         for (int i = 0; i < k; i++) {
+//             List<Integer> l = pq.poll();
+//             if (l == null) {
+//                 break;
+//             }
+//             ans.add(l);
+//         }
+//         System.out.println(topKSum);
+//         return ans;
+//     }
+	
+// 俩index轮流来行不通，因为[1,1,2] [1,2,3]这里，[2,2]了还会回到[1,3]
+    // public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
+    //     int n = nums1.length;
+    //     int m = nums2.length;
+    //     int idx1 = 0;
+    //     int idx2 = 0;
+    //     List<List<Integer>> ans = new ArrayList<>(k);
+    //     for (int i = 0; i < k; i++) {
+    //         List<Integer> pair = new ArrayList<>(2);
+    //         pair.add(nums1[idx1]);
+    //         pair.add(nums2[idx2]);
+    //         ans.add(pair);
+    //         if (idx1 + 1 >= n) {
+    //             if (idx2 + 1 >= m) {
+    //                 return ans;
+    //             } 
+    //             idx2++;
+    //             continue;
+    //         }
+    //         if (idx2 + 1 >= m) {
+    //             idx1++;
+    //             continue;
+    //         }
+    //         int l = nums1[idx1 + 1] + nums2[idx2];
+    //         int r = nums1[idx1] + nums2[idx2 + 1];
+    //         if (l < r) {
+    //             idx1++;
+    //         } 
+    //         if (l > r) {
+    //             idx2++;
+    //         }
+    //     }
+    //     return ans;
+    // }
