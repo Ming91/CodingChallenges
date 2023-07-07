@@ -7,3 +7,4 @@ class Solution {
         return ans;
     }
 }
+// math problem, xor make it O(n) with O(1)
