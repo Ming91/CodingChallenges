@@ -17,3 +17,5 @@ class Solution {
         return ans;
     }
 }
+// math problem, use a int[32] to 'store' apperance of each number in bit
+// O(n) with O(1)
