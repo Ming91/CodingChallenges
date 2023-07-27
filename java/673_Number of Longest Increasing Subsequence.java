@@ -1,10 +1,300 @@
+// Daily Challenge 07/21/2023
 class Solution {
+    static class Num {
+        int val;
+        int idx;
+        int count;
+        Num(int val, int idx) {
+            this.val = val;
+            this.idx = idx;
+            this.count = 0;
+        }
+        // public void setCount(int count) {
+        //     this.count = count;
+        // }
+    }
+
+    static class Term {
+        Num[] cands = new Num[50];
+        Num first;
+        Num last;
+        int size = 0;
+        Term() {};
+        Term(int val, int idx) {
+            add(val, idx);
+            first = last;
+        };
+        void add(int val, int idx) {
+            last = new Num(val, idx);
+            // learn how to expand
+            if (size == cands.length) {
+                cands = Arrays.copyOf(cands, size << 1);
+            }
+            cands[size++] = last;
+        }        
+    }
+    int searchTerm(Term[] seq, int target, int right) {
+        int l = 1;
+        int r = right;
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            Term term = seq[mid];
+            // System.out.println(term.first.val + "," + term.last.val);
+            if (term.last.val < target) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return l;
+    }
+
+    int searchIdx(Term term, int target) {
+        int l = 0;
+        int r = term.size - 1;
+        Num[] v = term.cands;
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            if (target >= v[mid].idx) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return l;
+    }
+    int searchVal(Term term, int target) {
+        int l = 0;
+        int r = term.size - 1;
+        Num[] v = term.cands;
+
+        // version 1
+        // while (l <= r) {
+        //     int mid = (l + r) >> 1;
+        //     if (target < v[mid].val) {
+        //         l = mid + 1;
+        //     } else {
+        //         r = mid - 1;
+        //     }
+        // }
+        // return r;
+
+        // version 2
+        while (l < r) {
+            int mid = (l + r) >> 1;
+            if (target < v[mid].val) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        // since if last element cant tell state
+        if (v[l].val > target) {
+            return l;
+        } else {
+            return l - 1;
+        }
+    }
     public int findNumberOfLIS(int[] nums) {
-        
+        int n = nums.length;
+        Term[] subSeq = new Term[n + 1];
+        int len = 0;
+        subSeq[0] = new Term((int)-1e6-1, -1);
+        for (int i = 0; i < n; i++) {
+            int num = nums[i];
+            // if larger than the last value in subSeq, add a term
+            // remember, last value in each term is the real value in subSeq
+            // others are candidates in history for count
+            if (num > subSeq[len].last.val) {
+                subSeq[++len] = new Term(num, i);
+            } else {
+                int insertIdx = searchTerm(subSeq, num, len);
+                // System.out.println(num + "," + insertIdx);
+                subSeq[insertIdx].add(num, i);
+            }
+        }
+        Term lastTerm = subSeq[len];
+        for (int i = 0; i < lastTerm.size; i++) {
+            // lastTerm.cands[i].count = 1;
+            // update to prefix count
+            lastTerm.cands[i].count = i + 1;
+        }
+        // System.out.println();
+        for (; len > 0; len--) {
+            Term prevTerm = subSeq[len - 1];
+            Term currTerm = subSeq[len];
+            for (int prevIdx = 0; prevIdx < prevTerm.size; prevIdx++) {
+                Num prev = prevTerm.cands[prevIdx];
+                // if this number is lager than all numbers in current term
+                //                or have idx lager than current term
+                //  just skip
+                if (prev.val < currTerm.first.val && prev.idx < currTerm.last.idx) {
+                    // use prefix need two idx for calculation
+                    // think straight here!
+                    
+                    // statement above make sure have valid idx
+                    // first valid idx that curr.idx > prev.idx
+                    int startIdx = searchIdx(currTerm, prev.idx);
+                    // last valid val that curr.val > prev.val
+                    int endIdx = searchVal(currTerm, prev.val);
+                    
+                    int currCount = 0;
+                    if (startIdx <= endIdx) {
+                        if (startIdx == 0) {
+                            currCount += currTerm.cands[endIdx].count;
+                        } else {
+                            currCount += currTerm.cands[endIdx].count - currTerm.cands[startIdx - 1].count;
+                        }
+                    }
+                    
+                    prev.count += currCount;
+                    // System.out.println(prev.val + "," + startIdx + "," + endIdx + "," + prev.count);
+                }
+                prev.count += prevIdx == 0 ? 0 : prevTerm.cands[prevIdx - 1].count;
+                // System.out.println(prev.val + "," + prev.count);
+            }
+        }
+        return subSeq[0].first.count;
     }
 }
 
 // how to use methond in problem 300, build subseq?
+// 还是一样的思路，但是要复杂很多, 不是简单的subseq, 要记录subseq更新的历史
+// 例如[1, 1, 3, 3, 2, 2]
+// 要这样记录
+// [0] : [1, 1]
+// [1] : [3, 3, 2, 2]
+// 这样每一位都是一个降序的list, 每列的最后一个组成了原来的subseq
+// 对新数i:
+//      1. 如果i比currList[last]大, 则新加一位空list, 把i放进去
+//      2. 否则, 要更新前面的列, 从左到右看看比哪一位的最后一个数小, 放进去
+// 这样subSeq构建完成, 要来计算count了
+// 原解法从后向前,从前向后应该也可以,
+// 对于目前的list, 和其之前的list比较, 
+//  prev里的元素可以当curr的前继 当且仅当 prev的value < curr, 且prev.idx<curr
+//  curr里value最大是first, idx最大是last
+//  // prev里value最小是last, idx最小是first, 比较一下,如果均不行,则跳过
+//      疑问: 根据构造,会这样么? -> 不是整个比较, 是prev每个元素比较
+//  然后就对该元素p统计curr里面value>p, idx>p的数量, 加到p的count里
+//  这样最后的count就该是第一个list里面count之和,如果定第一位是0,可以直接统计
+
+//  改进：从5ms->4ms, 使用prefix sum, 每个term里的num的count都设置为其后面count之和
+//  
+
+// class Solution {
+//     static class Num {
+//         int val;
+//         int idx;
+//         int count;
+//         Num(int val, int idx) {
+//             this.val = val;
+//             this.idx = idx;
+//             this.count = 0;
+//         }
+//         // public void setCount(int count) {
+//         //     this.count = count;
+//         // }
+//     }
+
+//     static class Term {
+//         Num[] cands = new Num[50];
+//         Num first;
+//         Num last;
+//         int size = 0;
+//         Term() {};
+//         Term(int val, int idx) {
+//             add(val, idx);
+//             first = last;
+//         };
+//         void add(int val, int idx) {
+//             last = new Num(val, idx);
+//             // learn how to expand
+//             if (size == cands.length) {
+//                 cands = Arrays.copyOf(cands, size << 1);
+//             }
+//             cands[size++] = last;
+//         }        
+//     }
+//     int searchTerm(Term[] seq, int target, int right) {
+//         int l = 1;
+//         int r = right;
+//         while (l < r) {
+//             int mid = (l + r) >> 1;
+//             Term term = seq[mid];
+//             // System.out.println(term.first.val + "," + term.last.val);
+//             if (term.last.val < target) {
+//                 l = mid + 1;
+//             } else {
+//                 r = mid;
+//             }
+//         }
+//         return l;
+//     }
+//     int searchIdx(Term term, int target) {
+//         int l = 0;
+//         int r = term.size - 1;
+//         Num[] v = term.cands;
+//         while (l < r) {
+//             int mid = (l + r) >> 1;
+//             if (target >= v[mid].idx) {
+//                 l = mid + 1;
+//             } else {
+//                 r = mid;
+//             }
+//         }
+//         return l;
+//     }
+//     public int findNumberOfLIS(int[] nums) {
+//         int n = nums.length;
+//         Term[] subSeq = new Term[n + 1];
+//         int len = 0;
+//         subSeq[0] = new Term((int)-1e6-1, -1);
+//         for (int i = 0; i < n; i++) {
+//             int num = nums[i];
+//             // if larger than the last value in subSeq, add a term
+//             // remember, last value in each term is the real value in subSeq
+//             // others are candidates in history for count
+//             if (num > subSeq[len].last.val) {
+//                 subSeq[++len] = new Term(num, i);
+//             } else {
+//                 int insertIdx = searchTerm(subSeq, num, len);
+//                 // System.out.println(num + "," + insertIdx);
+//                 subSeq[insertIdx].add(num, i);
+//             }
+//         }
+//         Term lastTerm = subSeq[len];
+//         for (int i = 0; i < lastTerm.size; i++) {
+//             lastTerm.cands[i].count = 1;
+//         }
+//         // System.out.println();
+//         for (; len > 0; len--) {
+//             Term prevTerm = subSeq[len - 1];
+//             Term currTerm = subSeq[len];
+//             for (int prevIdx = 0; prevIdx < prevTerm.size; prevIdx++) {
+//                 Num prev = prevTerm.cands[prevIdx];
+//                 // if this number is lager than all numbers in current term
+//                 //                or have idx lager than current term
+//                 //  just skip
+//                 if (prev.val >= currTerm.first.val || prev.idx >= currTerm.last.idx) {
+//                     continue;
+//                 }
+//                 // two constraint, idx and value, curr.first.val is larger prev,
+//                 // so search idx is better
+//                 int startIdx = searchIdx(currTerm, prev.idx);
+                
+//                 int currCount = 0;
+//                 for (int j = startIdx; j < currTerm.size && currTerm.cands[j].val > prev.val; j++) {
+//                     currCount += currTerm.cands[j].count;
+//                 }
+//                 prev.count += currCount;
+                
+//                 // System.out.println(prev.val + "," + startIdx + "," + prev.count);
+//             }
+//         }
+//         return subSeq[0].first.count;
+//     }
+// }
+
 
 /**
 一下代码思路错误,解题过程中的思考
