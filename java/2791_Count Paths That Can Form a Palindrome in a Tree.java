@@ -18,16 +18,28 @@ class Solution {
             int currMap = getMap(parent, s, dp, i);
             // if map are same, two points can form a path;
             int evenCount = mapCount.getOrDefault(currMap, 0);
-            ans += evenCount;
-            for (int j = 0; j < 26; j++) {
-                // if two points have at exact one diff, can form a path
-                ans += mapCount.getOrDefault(currMap ^ (1 << j), 0);
-            }
             mapCount.put(currMap, evenCount + 1);
+        }
+        for (int key : mapCount.keySet()) {
+            int value = mapCount.get(key);
+            ans += ((long)value * (value - 1)) >> 1;
+            for (int i = 0; i < 26; i++) {
+                int base = 1 << i;
+                // if this map at i is 1, which means odd this bit
+                if ((key & base) > 0 && mapCount.containsKey(key ^ base)) {
+                    // key ^ base is the map that is 0 at bit i, odd pairs with even, 
+                    // can pair and no duplicate
+                    ans += (long)value * mapCount.get(key ^ base);
+                }
+            }
         }
         return ans;
     }
 }
+
+
+// beat 99% idea
+//  统计完map, 统一计数
 
 // totally no idea, just learn solutions
 //  1. count parity of char in path root -> current
@@ -44,3 +56,33 @@ class Solution {
 //  3. 例如到了点i, 计算其bitmap,可以回溯根据其parent来找,这样可以将parent的bitmap存为dp[],减少计算
 //  4. 点i的bitmap得出, 如果hashmap里面此map有count个, 则点i和这些点均可以组成, 因此+count
 //  5. 对于点i的, 如果与点j至多有1位不同, 即一个char奇偶的奇偶不同,则组成的也至多有1个odd,符合, 也要加上
+
+// class Solution {
+//     int getMap(List<Integer> parent, String s, int[] dp, int idx) {
+//         if (dp[idx] < 0) {
+//             dp[idx] = 0;
+//             dp[idx] = getMap(parent, s, dp, parent.get(idx)) ^ (1 << (s.charAt(idx) - 'a'));
+//         }
+//         return dp[idx];
+//     }
+//     public long countPalindromePaths(List<Integer> parent, String s) {
+//         int n = parent.size();
+//         int dp[] = new int[n];
+//         long ans = 0;
+//         Map<Integer, Integer> mapCount = new HashMap<>();
+//         Arrays.fill(dp, -1);
+//         dp[0] = 0;
+//         for (int i = 0; i < n; i++) {
+//             int currMap = getMap(parent, s, dp, i);
+//             // if map are same, two points can form a path;
+//             int evenCount = mapCount.getOrDefault(currMap, 0);
+//             ans += evenCount;
+//             for (int j = 0; j < 26; j++) {
+//                 // if two points have at exact one diff, can form a path
+//                 ans += mapCount.getOrDefault(currMap ^ (1 << j), 0);
+//             }
+//             mapCount.put(currMap, evenCount + 1);
+//         }
+//         return ans;
+//     }
+// }
