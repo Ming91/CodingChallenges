@@ -1,37 +1,58 @@
+// LeetCode 75 Sliding Window Q4
 class Solution {
     public int longestSubarray(int[] nums) {
         int n = nums.length;
-        int ans = 0;
-        int left = 0;
-        int numZero = 0;
-        int lastZero = -1;
+        int l = 0;
+        int k = 1;
         for (int i = 0; i < n; i++) {
-            if (nums[i] == 0) {
-                numZero++;
-                if (numZero == 1) {
-                    lastZero = i;
-                }
-                if (numZero > 1) {
-                    left = lastZero + 1;
-                    numZero--;
-                    lastZero = i;
-                }
+            k -= nums[i] ^ 1;
+            if (k < 0) {
+                k += nums[l] ^ 1;
+                l++;
             }
-            // tricky compare, if all 1, len - 1, if 1 zero, still len - 1
-            
-            if (i - left> ans) {
-                ans = i - left;
-            }
-            // if use code below, still need delete 1 more for all 1;
-            // if (i - left - numZero + 1 > ans) {
-            //     ans = i - left - numZero + 1;
-            // }
-            // add 1 more compare for all 1 situation
-            // ans = ans == n ? n - 1 : ans;
         }
-        return ans;
+        // k = k < 0 ? 0 : k;
+        return n - l - 1; 
     }
 }
+// use method from 1004
+
+// Before 07/31/2023
+// class Solution {
+//     public int longestSubarray(int[] nums) {
+//         int n = nums.length;
+//         int ans = 0;
+//         int left = 0;
+//         int numZero = 0;
+//         int lastZero = -1;
+//         for (int i = 0; i < n; i++) {
+//             if (nums[i] == 0) {
+//                 numZero++;
+//                 if (numZero == 1) {
+//                     lastZero = i;
+//                 }
+//                 if (numZero > 1) {
+//                     left = lastZero + 1;
+//                     numZero--;
+//                     lastZero = i;
+//                 }
+//             }
+//             // tricky compare, if all 1, len - 1, if 1 zero, still len - 1
+            
+//             if (i - left> ans) {
+//                 ans = i - left;
+//             }
+//             // if use code below, still need delete 1 more for all 1;
+//             // if (i - left - numZero + 1 > ans) {
+//             //     ans = i - left - numZero + 1;
+//             // }
+//             // add 1 more compare for all 1 situation
+//             // ans = ans == n ? n - 1 : ans;
+//         }
+//         return ans;
+//     }
+// }
+
 // intuition slidiing window
 // class Solution {
 //     public int longestSubarray(int[] nums) {
