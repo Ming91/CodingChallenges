@@ -1,22 +1,54 @@
+// LeetCode 75 Stack Q2
 class Solution {
     public int[] asteroidCollision(int[] asteroids) {
-        int top = -1;
-        for (int next : asteroids) {
-            boolean isAlive = true;
-            while (isAlive && next < 0 && top >= 0 && asteroids[top] > 0) {
-                int temp = next + asteroids[top];
-                isAlive = temp < 0;
-                if (isAlive || temp == 0) {
-                    top--;
+        int n = asteroids.length;
+        int[] ans = new int[n];
+        int idx = 0;
+        for (int a : asteroids) {
+            if (a > 0 || idx == 0) {
+                ans[idx++] = a;
+                continue;
+            }
+            int curr = a;
+            while (idx > 0 && ans[idx - 1] > 0 && curr < 0) {
+                if (ans[idx - 1] > -curr) {
+                    curr = ans[idx - 1];
+                } else {
+                    if (ans[idx - 1] == -curr) {
+                        curr = 0;
+                    }
+                    idx--;
                 }
             }
-            if (isAlive) {
-                asteroids[++top] = next;
+            if (curr < 0) {
+                ans[idx++] = curr;
             }
         }
-        return Arrays.copyOf(asteroids, top + 1);
+        return Arrays.copyOf(ans, idx);
     }
 }
+// 回头练手居然更快了。。。
+// 用数组替代stack
+
+// class Solution {
+//     public int[] asteroidCollision(int[] asteroids) {
+//         int top = -1;
+//         for (int next : asteroids) {
+//             boolean isAlive = true;
+//             while (isAlive && next < 0 && top >= 0 && asteroids[top] > 0) {
+//                 int temp = next + asteroids[top];
+//                 isAlive = temp < 0;
+//                 if (isAlive || temp == 0) {
+//                     top--;
+//                 }
+//             }
+//             if (isAlive) {
+//                 asteroids[++top] = next;
+//             }
+//         }
+//         return Arrays.copyOf(asteroids, top + 1);
+//     }
+// }
 // beat 99% idea:
 // same runtime, better structure and logic
 
