@@ -1,4 +1,4 @@
-// Dailly Challenge 07/30/2023
+// Daily Challenge 07/30/2023
 class Solution {
     int[][] dp;
     char[] ch;
