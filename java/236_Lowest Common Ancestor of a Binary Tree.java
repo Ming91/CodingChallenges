@@ -1,3 +1,4 @@
+// LeetCode 75 Binary Tree - DFS Q6
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -7,29 +8,53 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
+// 08/05/2023 impl
 class Solution {
-    TreeNode dfs(TreeNode root, TreeNode p, TreeNode q) {
-        if (root == null) {
-            return null;
+    TreeNode p, q;
+    TreeNode dfs(TreeNode curr) {
+        if (curr == null || curr == p || curr == q) {
+            return curr;
         }
-        if (root == p || root == q) {
-            return root;
+        TreeNode l = dfs(curr.left);
+        TreeNode r = dfs(curr.right);
+        if (l == null) {
+            return r;
         }
-        TreeNode lt = dfs(root.left, p, q);
-        TreeNode rt = dfs(root.right, p, q);
-        if (lt == null || rt == null) {
-            return lt == null ? rt : lt;
+        if (r == null) {
+            return l;
         }
-        return root;
-        // if (lt != null && rt != null) {
-        //     return root;
-        // }
-        // return lt == null ? rt : lt;
+        return curr;
     }
-    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        return dfs(root, p, q);
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode pp, TreeNode qq) {
+        p = pp;
+        q = qq;
+        return dfs(root);
     }
 }
+
+// class Solution {
+//     TreeNode dfs(TreeNode root, TreeNode p, TreeNode q) {
+//         if (root == null) {
+//             return null;
+//         }
+//         if (root == p || root == q) {
+//             return root;
+//         }
+//         TreeNode lt = dfs(root.left, p, q);
+//         TreeNode rt = dfs(root.right, p, q);
+//         if (lt == null || rt == null) {
+//             return lt == null ? rt : lt;
+//         }
+//         return root;
+//         // if (lt != null && rt != null) {
+//         //     return root;
+//         // }
+//         // return lt == null ? rt : lt;
+//     }
+//     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+//         return dfs(root, p, q);
+//     }
+// }
 
 // beat 99%的方法：
 // 把不是pq的子树从下到上逐渐删除，若为pq则向上返回pq，如果两子树分别为pq即为答案，返回root，
