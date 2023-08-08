@@ -1,4 +1,4 @@
-// Weekly Contest 356
+// Weekly Contest 356 Q1
 class Solution {
     public int numberOfEmployeesWhoMetTarget(int[] hours, int target) {
         int count = 0;
