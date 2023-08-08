@@ -8,6 +8,7 @@ class RecentCounter {
     public int ping(int t) {
         // remove last 要找到倒数第二个
         // 还是addlast 和 removefirst更快
+        // 然而这是错误的结论, jdk中用的双向链表, 都一样
         q.addLast(t);
         while (q.getFirst() < t - 3000) {
             q.removeFirst();
