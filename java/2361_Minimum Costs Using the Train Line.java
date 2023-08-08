@@ -1,4 +1,4 @@
-// Weekly Premium 08/2023 W1
+// Weekly Premium August 2023 W1
 class Solution {
     public long[] minimumCosts(int[] regular, int[] express, int expressCost) {
         int n = regular.length;
