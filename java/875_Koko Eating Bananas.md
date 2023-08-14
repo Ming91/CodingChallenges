@@ -10,12 +10,15 @@ For the upper bound estimate, consider the **worst** situation which is: **we ha
 
 In this situation, Koko needs to eat `sum - n + 1` bananas in `h - n + 1` hours. Using the method above, we can see the upper bound is `(sum - n + 1 + (h - n + 1) - 1) / (h - n + 1)`, which is `(sum + h + 1 - (n << 1)) / (h - n + 1)`.
 
+Worst case: [a, a, a ....a] * 10^4, all same number piles, can be a large upper bound,
+use max as the upper bound in this case.
+
 # Approach
 <!-- Describe your approach to solving the problem. -->
 Use binary search to check for all possible answers in the range `[l, r]`.
 
 # Complexity
-- Time complexity: $O(n \cdot logn)$ 
+- Time complexity: $O(n \cdot log(Min(m, k))$ 
 <!-- Add your time complexity here, e.g. $$O(n)$$ -->
 
 - Space complexity: $O(1)$
