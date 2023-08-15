@@ -14,14 +14,15 @@ class Solution {
             sum += pile;
             // max = Math.max(max, pile);
         }
-        // get max is slower. l and r can do the job if h == n.
+        // get max is slower.
         // if (n == h) {
         //     return max;
         // }
         int l = (int) ((sum + h - 1) / h);
         // n piles need at least n hours, (h - n + 1) remaining hours for last pile
         // sum - n + 1 remaining bananas
-        int r = (int) ((sum + h + 1 - (n << 1)) / (h - n + 1));    
+        int r = (int) ((sum + h + 1 - (n << 1)) / (h - n + 1)); 
+        // r = Math.min(max, r);
         while (l < r) {
             int mid = (l + r) >> 1;
             // don't use function, same copy time
@@ -40,6 +41,9 @@ class Solution {
 }
 // upgrade the upper bound estimation, so sort is not needed.
 // don't use function, save the copy time
+
+// worst case [a, a, a ....a] * 10^4, all same number pile, can be a large upper bound,
+//  use max as upper bound in this case
 
 // use sort and binary search with instinct
 // class Solution {
