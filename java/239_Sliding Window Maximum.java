@@ -1,4 +1,4 @@
-// Daily Challenge 08/15/2023
+// Daily Challenge 08/16/2023
 class Solution {
     public int[] maxSlidingWindow(int[] nums, int k) {
         int n = nums.length;
