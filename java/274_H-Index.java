@@ -1,4 +1,4 @@
-// Top Interview 150 Q11
+// Top Interview 150 Array / String Q11
 class Solution {
     public int hIndex(int[] citations) {
         int n = citations.length;
