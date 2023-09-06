@@ -1,4 +1,4 @@
-// Top Interview 150 Q20
+// Top Interview 150 Array / String Q20
 class Solution {
     public String longestCommonPrefix(String[] strs) {
         StringBuilder sb = new StringBuilder();
