@@ -1,4 +1,4 @@
-// Top Interview 150 Q19
+// Top Interview 150 Array / String Q19
 class Solution {
     public int lengthOfLastWord(String s) {
         // s = s.trim();
