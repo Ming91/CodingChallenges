@@ -1,4 +1,4 @@
-// Top Interview 150 Q10
+// Top Interview 150 Array / String Q10
 class Solution {
     public int jump(int[] nums) {
         int n = nums.length;
