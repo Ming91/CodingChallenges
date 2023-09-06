@@ -1,27 +1,44 @@
+// LeetCode 75 DP - Multidimensional Q3
+// 08/24/2023 Impl
 class Solution {
     public int maxProfit(int[] prices, int fee) {
-        int dpHold;
-        int dpNone;
         int n = prices.length;
-
-        dpHold = -prices[0];
-        dpNone = 0;
+        int dpHold = -prices[0], dpNone = 0;
         for (int i = 1; i < n; i++) {
-            int l;
-            int r;
-            
-            l = dpNone;
-            r = dpHold + prices[i] - fee;
-            dpNone = l > r ? l : r;
-
-            l = dpHold;
-            r = dpNone - prices[i];
-            dpHold = l > r ? l : r;
-            
+            int l = dpHold;
+            int m = l + prices[i] - fee;
+            int k = dpNone - prices[i];
+            dpHold = Math.max(l, k);
+            dpNone = Math.max(m, dpNone);
         }
         return dpNone;
     }
 }
+
+// class Solution {
+//     public int maxProfit(int[] prices, int fee) {
+//         int dpHold;
+//         int dpNone;
+//         int n = prices.length;
+
+//         dpHold = -prices[0];
+//         dpNone = 0;
+//         for (int i = 1; i < n; i++) {
+//             int l;
+//             int r;
+            
+//             l = dpNone;
+//             r = dpHold + prices[i] - fee;
+//             dpNone = l > r ? l : r;
+
+//             l = dpHold;
+//             r = dpNone - prices[i];
+//             dpHold = l > r ? l : r;
+            
+//         }
+//         return dpNone;
+//     }
+// }
 
 /*
     dp[i] max profit @price[i]
