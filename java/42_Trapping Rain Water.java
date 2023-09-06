@@ -1,4 +1,4 @@
-// Top Interview 150 Q16
+// Top Interview 150 Array / String Q16
 // class Solution {
 //     public int trap(int[] height) {
 //         int n = height.length;
