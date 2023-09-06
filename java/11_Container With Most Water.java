@@ -1,25 +1,43 @@
+// Top Interview 150 Two Pointers Q4
 // LeetCode 75 Two Pointers Q3
 class Solution {
     public int maxArea(int[] height) {
-        // int n = height.length;
-        int l = 0;
-        int r = height.length - 1;
-        int area = 0;
-        while (l < r) {
-            int min = height[l] < height[r] ? height[l] : height[r];
-            // int max = height[l] + height[r] - min;
-            int currArea = (r - l) * min;
-            area = area < currArea ? currArea : area;
-            while (l < r && height[l] <= min) {
-                l++;
-            }
-            while (l < r && height[r] <= min) {
-                r--;
-            }
+        int ans=0, l=0, r=height.length-1, min;
+        
+        while(l<r){
+            min = Math.min(height[l], height[r]);
+            
+            ans = Math.max(ans, (r-l)*min);
+            
+            while(height[l]<=min && l<r) l++;
+            while(height[r]<=min && l<r) r--;
         }
-        return area;
+        
+        return ans;
     }
 }
+// 
+// class Solution {
+//     public int maxArea(int[] height) {
+//         // int n = height.length;
+//         int l = 0;
+//         int r = height.length - 1;
+//         int area = 0;
+//         while (l < r) {
+//             int min = height[l] < height[r] ? height[l] : height[r];
+//             // int max = height[l] + height[r] - min;
+//             int currArea = (r - l) * min;
+//             area = area < currArea ? currArea : area;
+//             while (l < r && height[l] <= min) {
+//                 l++;
+//             }
+//             while (l < r && height[r] <= min) {
+//                 r--;
+//             }
+//         }
+//         return area;
+//     }
+// }
 
 // awful impl
 // class Solution {
