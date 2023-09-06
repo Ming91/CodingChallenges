@@ -1,4 +1,4 @@
-// Top Interview 150 Q17
+// Top Interview 150 Array / String Q17
 class Solution {
     
     public int romanToInt(String s) {
