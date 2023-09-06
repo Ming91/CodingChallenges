@@ -1,3 +1,4 @@
+// LeetCode 75 Backtracking Q1
 // Daily Challenge 08/03/2023
 class Solution {
     static char[][] PAD = new char[][] {
@@ -10,25 +11,53 @@ class Solution {
         {'t', 'u', 'v'},
         {'w', 'x', 'y', 'z'}
     };
-    void backtrack(List<String> ans, char[] ch, int idx, char[] curr) {
-        if (idx == ch.length) {
+    // 08/22/2023 impl
+    void backtrack(List<String> ans, int[] d, int idx, char[] curr) {
+        if (idx == d.length) {
             ans.add(new String(curr));
             return ;
         }
-        for (char letter : PAD[ch[idx] - '2']) {
-            curr[idx] = letter;
-            backtrack(ans, ch, idx + 1, curr);
+        for (char c : PAD[d[idx]]) {
+            curr[idx] = c;
+            backtrack(ans, d, idx + 1, curr);
         }
         return ;
     }
     public List<String> letterCombinations(String digits) {
-        if (digits.isEmpty()) {
-            return new ArrayList<>();
-        }
         List<String> ans = new ArrayList<>();
-        backtrack(ans, digits.toCharArray(), 0, new char[digits.length()]);
+        int n = digits.length();
+        if (n == 0) {
+            return ans;
+        }
+        int[] d = new int[n];
+        for (int i = 0; i < n; i++) {
+            d[i] = digits.charAt(i) - '2';
+        }
+
+        backtrack(ans, d, 0, new char[n]);
         return ans;
     }
+
+    // 08/03/2023 impl
+    // void backtrack(List<String> ans, char[] ch, int idx, char[] curr) {
+    //     if (idx == ch.length) {
+    //         ans.add(new String(curr));
+    //         return ;
+    //     }
+    //     for (char letter : PAD[ch[idx] - '2']) {
+    //         curr[idx] = letter;
+    //         backtrack(ans, ch, idx + 1, curr);
+    //     }
+    //     return ;
+    // }
+    // public List<String> letterCombinations(String digits) {
+    //     if (digits.isEmpty()) {
+    //         return new ArrayList<>();
+    //     }
+    //     List<String> ans = new ArrayList<>();
+    //     backtrack(ans, digits.toCharArray(), 0, new char[digits.length()]);
+    //     return ans;
+    // }
 }
 
 // ugly simulation
