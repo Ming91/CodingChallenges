@@ -1,4 +1,4 @@
-// Top Interview 150 Q14
+// Top Interview 150 Array / String Q14
 class Solution {
     public int canCompleteCircuit(int[] gas, int[] cost) {
         int n = gas.length;
