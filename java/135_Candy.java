@@ -1,4 +1,4 @@
-// Top Interview 150 Q15
+// Top Interview 150 Array / String Q15
 class Solution {
     public int candy(int[] ratings) {
         int n = ratings.length;
