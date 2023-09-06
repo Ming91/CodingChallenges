@@ -1,4 +1,4 @@
-// Top Interview 150 Q12
+// Top Interview 150 Array / String Q12
 class RandomizedSet {
     Map<Integer, Integer> dict;
     static final int INIT_CAPACITY = 16;
