@@ -1,4 +1,4 @@
-// Top Interview 150 Array / String Q15
+// Daily Question 09/13/2023
 class Solution {
     public int candy(int[] ratings) {
         int n = ratings.length;
@@ -7,25 +7,57 @@ class Solution {
         int peak = 0;
         int candies = 1;
         for (int i = 1; i < n; i++) {
-            if (ratings[i - 1] < ratings[i]) {
+            if (ratings[i] > ratings[i - 1]) {
                 up++;
                 peak = up + 1;
                 down = 0;
                 candies += peak;
             } else if (ratings[i] == ratings[i - 1]) {
-                peak = 0;
                 up = 0;
+                peak = 1;
                 down = 0;
                 candies++;
             } else {
-                down++;
                 up = 0;
-                candies += down + (peak > down ? 0 : 1);
+                down++;
+                if (peak <= down) {
+                    candies++;
+                }
+                candies += down;
             }
         }
         return candies;
     }
 }
+
+// Top Interview 150 Array / String Q15
+// class Solution {
+//     public int candy(int[] ratings) {
+//         int n = ratings.length;
+//         int up = 0;
+//         int down = 0;
+//         int peak = 0;
+//         int candies = 1;
+//         for (int i = 1; i < n; i++) {
+//             if (ratings[i - 1] < ratings[i]) {
+//                 up++;
+//                 peak = up + 1;
+//                 down = 0;
+//                 candies += peak;
+//             } else if (ratings[i] == ratings[i - 1]) {
+//                 peak = 0;
+//                 up = 0;
+//                 down = 0;
+//                 candies++;
+//             } else {
+//                 down++;
+//                 up = 0;
+//                 candies += down + (peak > down ? 0 : 1);
+//             }
+//         }
+//         return candies;
+//     }
+// }
 // 1.1 more clear structure
 //  up is up trail count except start, including peak, 
 //  down is down trail except pea, including end;
