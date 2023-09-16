@@ -46,9 +46,22 @@ class Solution {
         // System.out.println(Arrays.deepToString(dist));
 
         // dijkstra to calc answer
+
+        // This is wrong, found it in problem 1631. Path With Minimum Effort
+        // If (a,b) added to the queue before, and added again with a smaller value later. 
+        // The later added (a,b) may be compared with the old (a, b) in the heap. 
+        // Even though (a, b) may have a smaller dist[][] value than its parent, 
+        // but dist[a][b] = dist[a][b] will stop it from continuing to compare and swap. So the queue is not maintained.
+        
+        // eg. (1, 1, 2) - (2, 2, 3), then (2, 2, 1) added, then dist[2][2] == dist[2][2] will stop (2, 2) compare to (1, 1).
+        
+        // Queue<List<Integer>> p = new PriorityQueue<>(
+        //     (l1, l2) -> (ans[l2.get(0)][l2.get(1)] - ans[l1.get(0)][l1.get(1)])
+        // );
         Queue<List<Integer>> p = new PriorityQueue<>(
-            (l1, l2) -> (ans[l2.get(0)][l2.get(1)] - ans[l1.get(0)][l1.get(1)])
+            (l1, l2) -> (l2.get(2) - l1.get(2))
         );
+        
         p.offer(List.of(0, 0));
         // ans[0][0] = dist[0][0];
         while (!p.isEmpty()) {
@@ -70,7 +83,7 @@ class Solution {
                     continue;
                 }
                 ans[i][j] = Math.min(ans[i][j], ans[ii][jj]);
-                p.offer(List.of(i, j));
+                p.offer(List.of(i, j, ans[i][j]));
             }
             // ans[ii][jj] = 0;
             
