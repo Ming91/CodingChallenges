@@ -1,37 +1,79 @@
-// Recall for Solving 439. Ternary Expression Parser
+// Top Interview 150 Stack Q4
+// 09/18/2023 Impl
 class Solution {
     String[] tokens;
     int idx;
-    private int eval() {
-        String tk = tokens[idx--];
-        int r, l;
-        switch (tk) {
-            case ("+"):
-                r = eval();
-                l = eval();
+    int eval() {
+        String str = tokens[idx--];
+        switch (str) {
+            case "+" -> {
+                int r = eval();
+                int l = eval();
                 return l + r;
-            case ("-"):
-                r = eval();
-                l = eval();
+            }
+            case "-" -> {
+                int r = eval();
+                int l = eval();
                 return l - r;
-            case ("*"):
-                r = eval();
-                l = eval();
+                
+            }
+            case "*" -> {
+                int r = eval();
+                int l = eval();
                 return l * r;
-            case ("/"):
-                r = eval();
-                l = eval();
+                
+            }
+            case "/" -> {
+                int r = eval();
+                int l = eval();
                 return l / r;
-            default:
-                return Integer.valueOf(tk);
+                
+            }
+            default -> {
+                return Integer.valueOf(str);
+            }
         }
     }
     public int evalRPN(String[] tokens) {
         this.tokens = tokens;
-        this.idx = tokens.length - 1;
+        idx = tokens.length - 1;
         return eval();
     }
 }
+// Recall for Solving 439. Ternary Expression Parser
+// class Solution {
+//     String[] tokens;
+//     int idx;
+//     private int eval() {
+//         String tk = tokens[idx--];
+//         int r, l;
+//         switch (tk) {
+//             case ("+"):
+//                 r = eval();
+//                 l = eval();
+//                 return l + r;
+//             case ("-"):
+//                 r = eval();
+//                 l = eval();
+//                 return l - r;
+//             case ("*"):
+//                 r = eval();
+//                 l = eval();
+//                 return l * r;
+//             case ("/"):
+//                 r = eval();
+//                 l = eval();
+//                 return l / r;
+//             default:
+//                 return Integer.valueOf(tk);
+//         }
+//     }
+//     public int evalRPN(String[] tokens) {
+//         this.tokens = tokens;
+//         this.idx = tokens.length - 1;
+//         return eval();
+//     }
+// }
 // beat 99%:
 //  no stack, just recursive from end
 //  beautiful use of index, no duplicate calls
