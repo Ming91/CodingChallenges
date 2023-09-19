@@ -23,6 +23,7 @@ jobs:
         
     - name: Format filenames of changed files in 'java' folder and its subfolders
       run: |
+        echo '${{ steps.file_changes.outputs.files_added }}'
         changed_files="${{ steps.file_changes.outputs.files_added }}"
         IFS=' ' read -ra files_array <<< "$changed_files"
         for file in "${files_array[@]}"; do
