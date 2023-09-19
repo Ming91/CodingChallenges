@@ -19,17 +19,14 @@ jobs:
       uses: trilom/file-changes-action@v1.2.3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        output: ' '
+        output: 'json'
         
     - name: Format filenames of changed files in 'java' folder and its subfolders
       run: |
-        echo '${{ steps.file_changes.outputs.files_added }}'
-        changed_files="${{ steps.file_changes.outputs.files_added }}"
-        IFS=' ' read -ra files_array <<< "$changed_files"
-        for file in "${files_array[@]}"; do
+        changed_files=$(echo '${{ steps.getfile.outputs.files }}' | jq -r '.[] | select(startswith("java/"))')
+        for file in $changed_files; do
           # Check if the file starts with up to 3 digits and doesn't end with .java
           if [[ $file =~ java/[0-9]{1,3}\.\ .*$ ]]; then
-            echo "Renaming $file"
             # Extract the numeric part and the rest of the filename
             number_part="${file%%.*}"
             number_part="${number_part#java/}"  # Remove the leading "java/"
