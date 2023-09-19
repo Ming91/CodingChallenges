@@ -16,15 +16,17 @@ jobs:
 
     - name: Rename files and add extension
       run: |
-        for file in $(git diff --name-only HEAD^ HEAD); do
+        for file in $(find . -type f -name "[0-9]*"); do
           # Check if the file starts with up to 3 digits followed by a period and space
-          if [[ $file =~ ^[0-9]{1,3}\.\ .*$ ]]; then
+          if [[ $file =~ ^./[0-9]{1,3}\.\ .*$ ]]; then
             # Extract the numeric part and the rest of the filename
             number_part="${file%%.*}"
+            number_part="${number_part#./}"  # Remove the leading "./"
             rest_part="${file#*. }"
-            
+            rest_part="${rest_part%.java}"  # Remove the ".java" if it exists
+
             # Format with padding zeros and append ".java"
-            newname=$(printf "%04d. %s.java" "$number_part" "$rest_part")
+            newname=$(printf "./%04d. %s.java" "$number_part" "$rest_part")
             
             echo "Renaming $file to $newname"
             git mv "$file" "$newname"
@@ -33,5 +35,5 @@ jobs:
 
     - name: Commit and push if changes were made
       run: |
-        git diff --exit-code || git commit -am "Renamed files and added extension"
+        git diff --exit-code || git commit -am "Renamed existing files and added extension"
         git push origin
