@@ -20,7 +20,14 @@ jobs:
         run: |
           # Get a list of files changed in the last commit
           changed_files=$(git diff --name-only HEAD~1 HEAD)
+          
+          # Debug: Print changed files
+          echo "Changed files:"
+          echo "$changed_files"
+          echo "------"
+          
           for file in $changed_files; do
+            echo "Processing: $file" # Debug output
             # Extract just the filename from the path
             filename=$(basename "$file")
             
