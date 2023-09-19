@@ -14,10 +14,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
+          fetch-depth: 2
 
       - name: Rename files in java folder using Bash
         run: |
-          for file in java/*; do
+          # Get a list of files changed in the last commit
+          changed_files=$(git diff --name-only HEAD~1 HEAD)
+          for file in $changed_files; do
             # Extract just the filename from the path
             filename=$(basename "$file")
             
