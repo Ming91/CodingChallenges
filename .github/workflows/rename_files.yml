@@ -13,13 +13,16 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+        
     - name: Format filenames of changed files in 'java' folder
       run: |
         changed_files=$(git diff HEAD^ --name-only -- 'java/**')
         for file in $changed_files; do
           # Check if the file starts with up to 3 digits and doesn't end with .java
-          if [[ $file =~ java/[0-9]{1,3}\.\ .*$ && ! $file =~ .java$ ]]; then
+          if [[ $file =~ java/[0-9]{1,3}\.\ .*$ ]]; then
+            
+            echo "Processing file: $file"
+            
             # Extract the numeric part and the rest of the filename
             number_part="${file%%.*}"
             number_part="${number_part#java/}"  # Remove the leading "java/"
