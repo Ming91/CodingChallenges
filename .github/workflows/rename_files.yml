@@ -3,7 +3,8 @@ name: Rename Java Files
 on:
   push:
     paths:
-      - 'java/*.java' # This will run the action only for Java file pushes
+      - 'java/**' # This will run the action only for Java file pushes
+      - '!*.md'
 
 jobs:
   rename:
@@ -13,12 +14,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Rename files
+    - name: Rename files and add extension
       run: |
         for file in $(git diff --name-only HEAD^ HEAD); do
-          # Check if the file starts with up to 3 digits followed by a non-digit character
-          if [[ $file =~ ^[0-9]{1,3}[^0-9].java$ ]]; then
-            newname=$(printf "%04d%s" "${file%%[^0-9]*}" "${file#*[0-9]}")
+          # Check if the file starts with up to 3 digits followed by a period and space
+          if [[ $file =~ ^[0-9]{1,3}\.\ .*$ ]]; then
+            # Extract the numeric part and the rest of the filename
+            number_part="${file%%.*}"
+            rest_part="${file#*. }"
+            
+            # Format with padding zeros and append ".java"
+            newname=$(printf "%04d. %s.java" "$number_part" "$rest_part")
+            
             echo "Renaming $file to $newname"
             git mv "$file" "$newname"
           fi
@@ -26,5 +33,5 @@ jobs:
 
     - name: Commit and push if changes were made
       run: |
-        git diff --exit-code || git commit -am "Renamed files"
+        git diff --exit-code || git commit -am "Renamed files and added extension"
         git push origin
