@@ -13,7 +13,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+      
+    - name: List detected files for debugging
+      run: |
+        echo "Detected files:"
+        find . -type f -name "[0-9]*"
+        
     - name: Rename files and add extension
       run: |
         for file in $(find . -type f -name "[0-9]*"); do
