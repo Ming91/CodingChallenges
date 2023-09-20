@@ -28,6 +28,13 @@ jobs:
           IFS=$'\n'
           for file in $changed_files; do
             echo "Processing: $file" # Debug output
+            
+            # Check if file exists
+            if [[ ! -f $file ]]; then
+              echo "Skipping $file as it does not exist." # Debug output
+              continue
+            fi
+            
             # Extract just the filename from the path
             filename=$(basename "$file")
             
