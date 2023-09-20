@@ -25,7 +25,7 @@ jobs:
           echo "Changed files:"
           echo "$changed_files"
           echo "------"
-          
+          IFS=$'\n'
           for file in $changed_files; do
             echo "Processing: $file" # Debug output
             # Extract just the filename from the path
