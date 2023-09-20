@@ -80,6 +80,9 @@ jobs:
 
         # Commit with the modified filenames if any file was renamed
         if [[ $file_renamed == true ]]; then
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
           git commit -m "Renamed files for formatting" -m "$(git diff --cached --name-only)"
         fi
 
