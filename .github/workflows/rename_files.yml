@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 2
 
     - name: Rename and commit files
       run: |
