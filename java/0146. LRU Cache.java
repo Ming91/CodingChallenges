@@ -1,4 +1,5 @@
-class LRUCache {
+// Top Interview 150 Linked List Q11
+ class LRUCache {
     int capacity;
     int count;
     Node head;
@@ -88,12 +89,111 @@ class LRUCache {
     }
 }
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache obj = new LRUCache(capacity);
- * int param_1 = obj.get(key);
- * obj.put(key,value);
- */
+// 用node[]作为hashmap来存key->node的pair
+// 用hashmap好像更慢
+// 更新只用找到dict[key],remove再add一下,并且更新一下val就行
+
+// Top Interview 150 09/21/2023 Impl
+// Not good, should use head.next and tail.prev;
+// class LRUCache {
+//     class Node {
+//         int val;
+//         int key;
+//         Node prev;
+//         Node next;
+//         Node() {}
+//         Node(int k, int v) {
+//             val = v;
+//             key = k;
+//         }
+//         public String toString() {
+//             String s = "";
+//             s += " key:" + key;
+//             s += " val:" + val;
+//             s += " prev:" + (prev == null ? "null" : prev.key);
+//             s += " next:" + (next == null ? "null" : next.key);
+//             return s;
+//         }
+//     }
+//     Map<Integer, Node> map;
+//     Node head;
+//     Node tail;
+//     int capacity;
+//     int count;
+
+//     public LRUCache(int capacity) {
+//         map = new HashMap<>();
+//         this.capacity = capacity;
+//         count = 0;
+//         head = null;
+//     }
+    
+//     public int get(int key) {
+//         if (!map.containsKey(key)) {
+//             return -1;
+//         }
+//         Node curr = map.get(key);
+//         // System.out.println("Curr noed" + curr.toString());
+//         // System.out.println("Tail Before:" + tail.key + "," + tail.val);
+//         update(curr);
+//         // System.out.println("Tail After:" + tail.key + "," + tail.val);
+//         return curr.val;
+//     }
+    
+//     public void put(int key, int value) {
+//         if (map.containsKey(key)) {
+//             Node curr = map.get(key);
+//             curr.val = value;
+//             update(curr);
+//             return ;
+//         }
+//         if (count == capacity) {
+//             // System.out.println("Remove:" + tail.key + "," + tail.val);
+//             remove();
+//         }
+//         Node curr = new Node(key, value);
+//         insert(curr);
+//     }
+//     private void insert(Node curr) {
+//         count++;
+//         map.put(curr.key, curr);
+//         if (count == 1) {
+//             head = curr;
+//             tail = curr;
+//             return ;
+//         }
+//         curr.next = head;
+//         curr.prev = null;
+//         head.prev = curr;
+//         head = curr;
+//     }
+//     private void update(Node curr) {
+//         if (head == curr) {
+//             return ;
+//         }
+//         if (tail == curr) {
+//             tail = tail.prev;
+//         } else {
+//             curr.next.prev = curr.prev;
+//         }
+//         curr.prev.next = curr.next;
+//         curr.next = head;
+//         curr.prev = null;
+//         head.prev = curr;
+//         head = curr;
+//     }
+
+//     private void remove() {
+//         count--;
+//         map.remove(tail.key);
+//         tail = tail.prev;
+//         if (tail == null) {
+//             head = null;
+//         } else {
+//             tail.next = null;
+//         }
+//     }
+// }
 
  
 // use linkedlist, the cost of find a existing key and update tooo large
