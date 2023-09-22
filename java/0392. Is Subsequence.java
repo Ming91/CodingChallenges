@@ -1,3 +1,4 @@
+// Daily Question 09/22/2023
 // Top Interview 150 Two Pointers Q2
 // LeetCode 75 Two Pointers Q2
 class Solution {
@@ -23,6 +24,9 @@ class Solution {
     }
 }
 // char[] faster
+
+// **Use a hashmap for indices of chars in t to solve follow-up question.
+// Follow-up: what if there are may s, like 10^9 s. 
 
 // class Solution {
 //     public boolean isSubsequence(String s, String t) {
