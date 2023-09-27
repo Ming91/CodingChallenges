@@ -1,3 +1,4 @@
+// Top Interview 150 Binary Tree General Q14
 // LeetCode 75 Binary Tree - DFS Q6
 /**
  * Definition for a binary tree node.
@@ -8,29 +9,54 @@
  *     TreeNode(int x) { val = x; }
  * }
  */
-// 08/05/2023 impl
+// Top Interview 09/26/2023 Impl
 class Solution {
     TreeNode p, q;
-    TreeNode dfs(TreeNode curr) {
-        if (curr == null || curr == p || curr == q) {
-            return curr;
+    TreeNode dfs(TreeNode root) {
+        TreeNode left = root.left == null ? null : dfs(root.left);
+        TreeNode right = root.right == null ? null : dfs(root.right);
+        if (root == p || root == q || (left == p && right == q) || (left == q && right == p)) {
+            return root;
         }
-        TreeNode l = dfs(curr.left);
-        TreeNode r = dfs(curr.right);
-        if (l == null) {
-            return r;
+        if (left == null) {
+            return right;
         }
-        if (r == null) {
-            return l;
+        if (right == null) {
+            return left;
         }
-        return curr;
+        return null;
     }
-    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode pp, TreeNode qq) {
-        p = pp;
-        q = qq;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        this.p = p;
+        this.q = q;
         return dfs(root);
+        
     }
 }
+
+// 08/05/2023 impl
+// class Solution {
+//     TreeNode p, q;
+//     TreeNode dfs(TreeNode curr) {
+//         if (curr == null || curr == p || curr == q) {
+//             return curr;
+//         }
+//         TreeNode l = dfs(curr.left);
+//         TreeNode r = dfs(curr.right);
+//         if (l == null) {
+//             return r;
+//         }
+//         if (r == null) {
+//             return l;
+//         }
+//         return curr;
+//     }
+//     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode pp, TreeNode qq) {
+//         p = pp;
+//         q = qq;
+//         return dfs(root);
+//     }
+// }
 
 // class Solution {
 //     TreeNode dfs(TreeNode root, TreeNode p, TreeNode q) {
