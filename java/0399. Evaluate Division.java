@@ -1,98 +1,191 @@
+// Top Interview 150 Graph General Q4
 // LeetCode 75 Graphs - DFS Q4
+
+// Top Interview 150 09/28/2023 Impl
 class Solution {
     class UnionFind {
-        int[] fathers;
-        // int[] rank;
+        int[] parents;
+        int[] ranks;
         double[] values;
         UnionFind(int n) {
-            fathers = new int[n];
-            // rank = new int[n];
+            parents = new int[n];
+            ranks = new int[n];
             values = new double[n];
             for (int i = 0; i < n; i++) {
-                fathers[i] = i;
+                parents[i] = i;
+                ranks[i] = 1;
                 values[i] = 1.0;
             }
         }
-
-        Pair<Integer, Double> find(int x) {
-            if (fathers[x] == x) {
-                return new Pair<>(x, values[x]);
+        int find(int x) {
+            int p = parents[x];
+            if (x != p) {
+                parents[x] = find(p);
+                values[x] *= values[p];
             }
-            Pair<Integer, Double> p = find(fathers[x]);
-            fathers[x] = p.getKey();
-            values[x] = p.getValue() * values[x];
-            return new Pair<>(fathers[x], values[x]);
+            return parents[x];
         }
-
-        void union(int x, int y, double v) {
-            Pair<Integer, Double> px = find(x), py = find(y);
-            int fx = px.getKey(), fy = py.getKey();
-            double vx = px.getValue(), vy = py.getValue();
-            if (fx == fy) {
-                return ;
+        double union(int x, int y, double v) {
+            int px = find(x);
+            int py = find(y);
+            if (px == py) {
+                return values[x] / values[y];
             }
-            fathers[fx] = fy;
-            values[fx] = values[y] / values[x] * v;
-            return ;
+            if (v < 0) {
+                return -1;
+            }
+            if (ranks[px] <= ranks[py]) {
+                ranks[py] += ranks[px];
+                parents[px] = py;
+                values[px] = values[y] / values[x] * v;
+            } else {
+                ranks[px] += ranks[py];
+                parents[py] = px;
+                // px * x = py * y * v
+                values[py] = values[x] / values[y] / v;
+            }
+            return v;
         }
+        
     }
     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
         Map<String, Integer> strToIdx = new HashMap<>();
-        int n = values.length;
-        int len = 0;
-        // Step 1. Transfer to Double[][] map
-        //  1.1 map string to idx
-        for (int i = 0; i < n; i++) {
-            List<String> Pair = equations.get(i);
-            String l = Pair.get(0);
-            String r = Pair.get(1);
-            if (!strToIdx.containsKey(l)) {
-                strToIdx.put(l, len++);
-            }
-            if (!strToIdx.containsKey(r)) {
-                strToIdx.put(r, len++);
-            }
+        final int[] n = {0};
+        for (List<String> e : equations) {
+            strToIdx.computeIfAbsent(e.get(0), k -> n[0]++);
+            strToIdx.computeIfAbsent(e.get(1), k -> n[0]++);
         }
-        // 1.2 map equations to adj matrix
-        UnionFind uf = new UnionFind(len);
-        for (int i = 0; i < n; i++) {
-            List<String> Pair = equations.get(i);
-            String l = Pair.get(0);
-            String r = Pair.get(1);
-            int idxL = strToIdx.get(l);
-            int idxR = strToIdx.get(r);
-            uf.union(idxL, idxR, values[i]);
+        UnionFind uf = new UnionFind(n[0]);
+        int count = values.length;
+        for (int i = 0; i < count; i++) {
+            int x = strToIdx.get(equations.get(i).get(0));
+            int y = strToIdx.get(equations.get(i).get(1));
+            // System.out.println(equations.get(i).get(0) + "," + equations.get(i).get(1));
+            // System.out.println("before:" + x + "," + uf.values[x] + ";" + y + "," + uf.values[y]);
+            // System.out.println(Arrays.toString(uf.parents));
+            uf.union(x, y, values[i]);
+            // System.out.println("after:" + x + "," + uf.values[x] + ";" + y + "," + uf.values[y]);
+            // System.out.println(Arrays.toString(uf.parents));
+            // System.out.println();
         }
-
-        int idx = 0;
-        double[] ans = new double[queries.size()];
-        boolean[] visited = new boolean[len];
-        for (List<String> query : queries) {
-            String l = query.get(0);
-            String r = query.get(1);
-            int idxL = strToIdx.getOrDefault(l, -1);
-            int idxR = strToIdx.getOrDefault(r, -1);
-            if ((idxL | idxR) < 0) {
-                ans[idx++] = -1.0;
+        int queryNum = queries.size();
+        double[] ans = new double[queryNum];
+        System.out.println(strToIdx);
+        // for (int i = 0; i < n[0]; i++) {
+        //     System.out.println(i + "," + uf.values[i]);
+        // }
+        for (int i = 0; i < queryNum; i++) {
+            int x = strToIdx.getOrDefault(queries.get(i).get(0), -1);
+            int y = strToIdx.getOrDefault(queries.get(i).get(1), -1);
+            if (x < 0 || y < 0) {
+                ans[i] = -1;
                 continue;
             }
-            // for (int i = 0; i < len; i++) {
-            //     for (int j = 0; j < len; j++) {
-            //         System.out.printf("%.4f,", adj[i][j]);
-            //     }
-            //     System.out.println();
-            // }
-            // System.out.println("---------------");
-            Pair<Integer, Double> pl = uf.find(idxL), pr = uf.find(idxR);
-            if (pl.getKey() != pr.getKey()) {
-                ans[idx++] = -1.0;
-            } else {
-                ans[idx++] = pl.getValue() / pr.getValue();
-            }
+            // System.out.println(queries.get(i).get(0) + "," + queries.get(i).get(1));
+            // System.out.println("before:" + x + "," + uf.values[x] + ";" + y + "," + uf.values[y]);
+            ans[i] = uf.union(x, y, -1);
+            // System.out.println("after:" + x + "," + uf.values[x] + ";" + y + "," + uf.values[y]);
+            // System.out.println();
         }
-        return ans;        
+        return ans;
     }
 }
+
+// LeetCode 75 Graphs - DFS Q4 Impl
+// class Solution {
+//     class UnionFind {
+//         int[] fathers;
+//         // int[] rank;
+//         double[] values;
+//         UnionFind(int n) {
+//             fathers = new int[n];
+//             // rank = new int[n];
+//             values = new double[n];
+//             for (int i = 0; i < n; i++) {
+//                 fathers[i] = i;
+//                 values[i] = 1.0;
+//             }
+//         }
+
+//         Pair<Integer, Double> find(int x) {
+//             if (fathers[x] == x) {
+//                 return new Pair<>(x, values[x]);
+//             }
+//             Pair<Integer, Double> p = find(fathers[x]);
+//             fathers[x] = p.getKey();
+//             values[x] = p.getValue() * values[x];
+//             return new Pair<>(fathers[x], values[x]);
+//         }
+
+//         void union(int x, int y, double v) {
+//             Pair<Integer, Double> px = find(x), py = find(y);
+//             int fx = px.getKey(), fy = py.getKey();
+//             double vx = px.getValue(), vy = py.getValue();
+//             if (fx == fy) {
+//                 return ;
+//             }
+//             fathers[fx] = fy;
+//             values[fx] = values[y] / values[x] * v;
+//             return ;
+//         }
+//     }
+//     public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+//         Map<String, Integer> strToIdx = new HashMap<>();
+//         int n = values.length;
+//         int len = 0;
+//         // Step 1. Transfer to Double[][] map
+//         //  1.1 map string to idx
+//         for (int i = 0; i < n; i++) {
+//             List<String> Pair = equations.get(i);
+//             String l = Pair.get(0);
+//             String r = Pair.get(1);
+//             if (!strToIdx.containsKey(l)) {
+//                 strToIdx.put(l, len++);
+//             }
+//             if (!strToIdx.containsKey(r)) {
+//                 strToIdx.put(r, len++);
+//             }
+//         }
+//         // 1.2 map equations to adj matrix
+//         UnionFind uf = new UnionFind(len);
+//         for (int i = 0; i < n; i++) {
+//             List<String> Pair = equations.get(i);
+//             String l = Pair.get(0);
+//             String r = Pair.get(1);
+//             int idxL = strToIdx.get(l);
+//             int idxR = strToIdx.get(r);
+//             uf.union(idxL, idxR, values[i]);
+//         }
+
+//         int idx = 0;
+//         double[] ans = new double[queries.size()];
+//         boolean[] visited = new boolean[len];
+//         for (List<String> query : queries) {
+//             String l = query.get(0);
+//             String r = query.get(1);
+//             int idxL = strToIdx.getOrDefault(l, -1);
+//             int idxR = strToIdx.getOrDefault(r, -1);
+//             if ((idxL | idxR) < 0) {
+//                 ans[idx++] = -1.0;
+//                 continue;
+//             }
+//             // for (int i = 0; i < len; i++) {
+//             //     for (int j = 0; j < len; j++) {
+//             //         System.out.printf("%.4f,", adj[i][j]);
+//             //     }
+//             //     System.out.println();
+//             // }
+//             // System.out.println("---------------");
+//             Pair<Integer, Double> pl = uf.find(idxL), pr = uf.find(idxR);
+//             if (pl.getKey() != pr.getKey()) {
+//                 ans[idx++] = -1.0;
+//             } else {
+//                 ans[idx++] = pl.getValue() / pr.getValue();
+//             }
+//         }
+//         return ans;        
+//     }
+// }
 
 // 人家用的并查集, O(m*log(n))
 // 并查集方法a/b = v, 则a->b, a.v = v
