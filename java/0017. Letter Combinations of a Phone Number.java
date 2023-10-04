@@ -1,5 +1,6 @@
 // LeetCode 75 Backtracking Q1
 // Daily Challenge 08/03/2023
+// Top Interview 150 Backtracking Q1
 class Solution {
     static char[][] PAD = new char[][] {
         {'a', 'b', 'c'},
@@ -11,6 +12,26 @@ class Solution {
         {'t', 'u', 'v'},
         {'w', 'x', 'y', 'z'}
     };
+    int n;
+    // 10/04/2023 Impl
+    // void backtrack(List<String> ans, char[] d, String res) {
+    //     if (res.length() == n) {
+    //         if (n != 0) {
+    //             ans.add(res);
+    //         }
+    //         return;
+    //     }
+    //     int i = res.length();
+    //     for (char c : PAD[d[i] - '2']) {
+    //         backtrack(ans, d, res + c);
+    //     }
+    // }
+    // public List<String> letterCombinations(String digits) {
+    //     n = digits.length();
+    //     List<String> ans = new ArrayList<>();
+    //     backtrack(ans, digits.toCharArray(), "");
+    //     return ans;
+    // }
     // 08/22/2023 impl
     void backtrack(List<String> ans, int[] d, int idx, char[] curr) {
         if (idx == d.length) {
