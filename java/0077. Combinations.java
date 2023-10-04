@@ -1,3 +1,23 @@
+// Top Interview 150 Backtracking Q1
+// class Solution {
+//     void backtrack(List<List<Integer>> ans, int n, int k, List<Integer> res) {
+//         if (res.size() == k) {
+//             ans.add(new ArrayList<>(res));
+//             return;
+//         }
+//         for (int i = res.isEmpty() ? 1 : res.get(res.size() - 1) + 1; i <= n; i++) {
+//             res.add(i);
+//             backtrack(ans, n, k, res);
+//             res.remove(Integer.valueOf(i));
+//         }
+//     }
+//     public List<List<Integer>> combine(int n, int k) {
+//         List<List<Integer>> ans = new ArrayList<>();
+//         backtrack(ans, n, k, new ArrayList<>());
+//         return ans;
+//     }
+// }
+
 // Daily Challenge 08/01/2023
 class Solution {
     void comb(int n, int k, List<List<Integer>> ans, List<Integer> curr) {
