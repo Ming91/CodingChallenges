@@ -1,4 +1,4 @@
-// Daily Question 10/02/2023
+// Daily Question 10/03/2023
 class Solution {
     public int numIdenticalPairs(int[] nums) {
         int[] count = new int[101];
