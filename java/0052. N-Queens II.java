@@ -5,6 +5,7 @@ class Solution {
         if (curr == 0) {
             return true;
         }
+        // Rules below included in loop check. But runs faster if prechecked here.
         if (res[curr - 1] >= cand - 1 && res[curr - 1] <= cand + 1) {
             return false;
         }
