@@ -1,16 +1,33 @@
-// LeetCode 75 DP - 1D Q2
+// Daily Question 10/13/2023
 class Solution {
     public int minCostClimbingStairs(int[] cost) {
-        int a = 0, b = 0;
-        int n = cost.length;
-        for (int i = 2; i <=n; i++) {
-            int c = Math.min(a + cost[i - 2], b + cost[i - 1]);
+        int a = 0;
+        int b = 0;
+        int c = 0;
+        for (int i = 2; i <= cost.length; i++) {
+            c = Math.min(a + cost[i - 2], b + cost[i - 1]);
             a = b;
             b = c;
+            c = a;
+            
         }
         return b;
     }
 }
+
+// LeetCode 75 DP - 1D Q2
+// class Solution {
+//     public int minCostClimbingStairs(int[] cost) {
+//         int a = 0, b = 0;
+//         int n = cost.length;
+//         for (int i = 2; i <=n; i++) {
+//             int c = Math.min(a + cost[i - 2], b + cost[i - 1]);
+//             a = b;
+//             b = c;
+//         }
+//         return b;
+//     }
+// }
 
 // class Solution {
 //     public int minCostClimbingStairs(int[] cost) {
