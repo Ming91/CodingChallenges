@@ -1,64 +1,46 @@
-// Weekly Contest 367 Q4
+// Weekly Contest 368 Q1
 class Solution {
-    public int[][] constructProductMatrix(int[][] grid) {
-        final int MOD = 12345;
-        // 12345 = 3 * 5 * 823;
-        int m = grid.length;
-        int n = grid[0].length;
-        int[][] p = new int[m][n];
-        int len = m * n;
-        int[] prev = new int[len];
-        int[] next = new int[len];
-        prev[0] = 1;
-        next[len - 1] = 1;
-        int idx = 1;
-        boolean zero = false;
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i == 0 && j == 0) {
-                    continue;
-                }
-                int curr = j == 0 ? grid[i - 1][n - 1] : grid[i][j - 1];
-                curr = curr % MOD;
-                prev[idx] = (prev[idx - 1] * curr) % MOD;
-                if (prev[idx] == 0) {
-                    zero = true;
-                    break;
-                }
-                idx++;
-            }
-            if (zero) {
-                break;
+    public int minimumSum(int[] nums) {
+        int n = nums.length;
+        int[] prev = new int[n];
+        prev[0] = Integer.MAX_VALUE;
+        for (int i = 1; i < n; i++) {
+            prev[i] = Math.min(prev[i - 1], nums[i - 1]);
+        }
+        int succ = nums[n - 1];
+        int ans = Integer.MAX_VALUE;
+        for (int i = n - 2; i >= 0; i--) {
+            succ = Math.min(succ, nums[i + 1]);
+            if (succ < nums[i] && prev[i] < nums[i]) {
+                ans = Math.min(ans, prev[i] + nums[i] + succ);
             }
         }
-        // System.out.println(Arrays.toString(prev));
-        idx = len - 2;
-        zero = false;
-        for (int i = m - 1; i >= 0; i--) {
-            for (int j = n - 1; j >= 0; j--) {
-                if (i == m - 1 && j == n - 1) {
-                    p[i][j] = prev[len - 1];
-                    continue;
-                }
-                int curr = j == n - 1 ? grid[i + 1][0] : grid[i][j + 1];
-                curr = curr % MOD;
-                next[idx] = (next[idx + 1] * curr) % MOD;
-                p[i][j] = (prev[idx] * next[idx]) % MOD;
-                if (next[idx] == 0) {
-                    zero = true;
-                    break;
-                }
-                idx--;
-            }
-            if (zero) {
-                break;
-            }
-        }
-        return p;
+        return ans == Integer.MAX_VALUE ? -1 : ans;
     }
 }
-// [TODO]
-//  Better way is to really flatten the grid. 
-//  n*m <= 10^5, so just do it. 
 // [Ming]
-//  Flatten the grid as an array. 
+//  Trade space for time. Preprocess prefix and suffix min then compare. 
+
+// [TODO]
+//  Find relation with '456. 132 Pattern' and '2874. Maximum Value of an Ordered Triplet II'
+
+// [Ming] Failed monotonic stack solution. [2, 3, 2, 1] wont work. 
+// class Solution {
+//     public int minimumSum(int[] nums) {
+//         int n = nums.length;
+//         int[] stack = new int[n];
+//         int inf = 300_000_001;
+//         int p = 0;
+//         int ans = inf;
+//         for (int i = 1; i < n; i++) {
+//             while (p > 0 && nums[stack[p]] > nums[i]) {
+//                 ans = Math.min(ans, nums[stack[0]] + nums[stack[p--]] + nums[i]);
+//             }
+//             while (p >= 0 && nums[stack[p]] > nums[i]) {
+//                 p--;
+//             }
+//             stack[++p] = i;
+//         }
+//         return ans == inf ? -1 : ans;
+//     }
+// }
