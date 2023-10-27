@@ -51,6 +51,29 @@ class Solution {
         }
         return group;
     }
+    // [doocs]
+    //  Much better idea.
+    //  len/size < len%size means we can't consume all remainder by
+    //  by converting k->k+1. 
+    //  For a valid len, we only need to count the groups. 
+    //  k+1,k+1,...,k+1, k,..,k,k is the same size as
+    //  k+1,K+1,...,k+1, k+1,..,k+1,r. so (len + size)/(size+1) is the answer. 
+    //  More: len = (k+1)*x, (len+k)/(k+1)=x,
+    //        len = (k+1)*x + k*y = (k+1)*(x+y-1) + (k-(y-1)), where k-y+1>0
+    //        (len+k)/(k+1) = x+y-1+1 = x+y. 
+    int parti(Map<Integer, Integer> countFreq, int size) {
+        int group = 0;
+        for (Map.Entry<Integer, Integer> e : countFreq.entrySet()) {
+            int len = e.getKey();
+            int v = e.getValue();
+            if (len / size < len % size) {
+                return -1;
+            }
+            group += (len + size) / (size + 1) * v;
+
+        }
+        return group;
+    }
     public int minGroupsForValidAssignment(int[] nums) {
         Map<Integer, Integer> count = new HashMap<>();
         for (int num : nums) {
@@ -66,7 +89,8 @@ class Solution {
         }
         for (int size = min; size >= 1; size--) {
             // int group = groupBySize(countFreq, size);
-            int group = partition(countFreq, size);
+            // int group = partition(countFreq, size);
+            int group = parti(countFreq, size);
             if (group > 0) {
                 return group;
             }
