@@ -25,3 +25,17 @@ class Solution {
 //          a,      a,      a,      a
 //              b,  b,          b,  b
 //                      c,  c,  c,  c
+//    3 state(2 round), 2 pigs, 9 buckets design: 
+//      0,  1,  2,  3,  4,  5,  6,  7,  8 (10 base)
+//      0,  1,  2, 10, 11, 12, 20, 21, 22 (3 base)
+//          a   a       a   a       a   a 
+//         a1  a2      a1  a2      a1  a2 (digit in 3 base means )
+//                 b1, b1, b1, b2, b2, b2
+//    1:    a,     b,  ab,  b,      a,
+//    2:       a,           a,  b,  b, ab
+
+//  [Dylan] 
+//   He saw this problem in a more perceptive view. 
+//   The process is like a decision tree. And each pig dies means we need to cut the branch. 
+//   Although all pigs take the water simultaneously, the act as the decisions in an order 
+//   on the tree. Just like the number representation. ab = a * base + b. 
