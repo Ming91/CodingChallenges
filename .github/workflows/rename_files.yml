@@ -3,7 +3,7 @@ name: Format Filenames
 on:
   push:
     paths:
-      - "java/**"
+      - "/**"
 
 jobs:
   format:
@@ -20,9 +20,6 @@ jobs:
         run: |
           # Get a list of files changed in the latest commit
           changed_files=$(git diff --name-only HEAD~1 HEAD)
-
-          # Define the base path for the files
-          base_path="LeetCode/Java"
 
           # Define the default extension
           default_extension="java"
@@ -53,7 +50,8 @@ jobs:
               continue
             fi
 
-            # Extract just the filename from the path
+            # Extract the directory and filename
+            dir=$(dirname "$file")
             filename=$(basename "$file")
             
             # Extract the file extension
@@ -70,7 +68,7 @@ jobs:
               newFilename="${number}. ${name}.${extension}"
 
               # Construct the new path
-              newPath="$base_path/$newFilename"
+              newPath="$dir/$newFilename"
 
               if [[ "$file" != "$newPath" ]]; then
                 echo "Renaming $file to $newPath" # Debug output
