@@ -1,0 +1,55 @@
+# Intuition
+<!-- Describe your first thoughts on how to solve this problem. -->
+See the consequtive numbers of the same parity as one number:
+```
+[2, 3, 6, 1, 9, 2] to [2, 3, 6, 10, 2]
+```
+Because if we want to change the parity at `nums[4] = 9`, we can change at `nums[3] = 1` with more score.
+
+# Approach
+<!-- Describe your approach to solving the problem. -->
+Calculate the sum of consequtive numbers of the same parity. Only need to update the score when the parity changed, and update the score with this sum.
+
+The score is the max of:
+```
+previous score of same parity + sequence sum,
+previous score of different parity + sequence sum - penalty
+```
+
+# Complexity
+- Time complexity: $$O(n)$$
+<!-- Add your time complexity here, e.g. $$O(n)$$ -->
+
+- Space complexity: $$O(1)$$
+<!-- Add your space complexity here, e.g. $$O(n)$$ -->
+
+# Code
+```java
+class Solution {
+    public long maxScore(int[] nums, int x) {
+        int n = nums.length;
+        long[] score = new long[2];         // score for even and odd
+        int curr = nums[0] & 1;             // Parity identifier 0: even 1: odd
+        long seqSum = 0;                    // Sum of consecutive series of the same parity
+        long ans = 0;
+        score[curr] = nums[0];
+        score[1 - curr] = nums[0] - x;
+        for (int i = 1; i < n + 1; i++) {
+            if (i < n && (nums[i] & 1) == curr) {
+                // if same parity, add to seqSum
+                seqSum += nums[i];
+            } else {
+                // if parity changed, compare two scores
+                score[curr] = Math.max(score[curr] + seqSum, score[1 - curr] + seqSum - x);
+                ans = Math.max(ans, score[curr]);
+                curr = 1 - curr;
+                if (i < n) {
+                    seqSum = nums[i];
+                }
+                
+            }
+        }
+        return ans;
+    }
+}
+```
