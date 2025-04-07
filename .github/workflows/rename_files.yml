@@ -74,7 +74,7 @@ jobs:
 
             # Check if the file matches the desired pattern
             if [[ $filename =~ ^([0-9]+)\.\ (.*)\..*$ ]]; then
-              number=$(printf "%04d" "10#${BASH_REMATCH[1]}"")
+              number=$(printf "%04d" "10#${BASH_REMATCH[1]}")
               name=${BASH_REMATCH[2]}
               newFilename="${number}. ${name}.${extension}"
 
