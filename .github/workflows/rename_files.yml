@@ -74,7 +74,10 @@ jobs:
 
             # Check if the file matches the desired pattern
             if [[ $filename =~ ^([0-9]+)\.\ (.*)\..*$ ]]; then
-              number=$(printf "%04d" "10#${BASH_REMATCH[1]}")
+              # Get the number and format it to exactly 4 digits
+              original_number=${BASH_REMATCH[1]}
+              # Remove any leading zeros and format to 4 digits
+              number=$(printf "%04d" $((10#$original_number)))
               name=${BASH_REMATCH[2]}
               newFilename="${number}. ${name}.${extension}"
 
