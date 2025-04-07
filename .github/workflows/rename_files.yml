@@ -3,97 +3,104 @@ name: Format Filenames
 on:
   push:
     paths:
-      - 'java/**'
+      - "java/**"
 
 jobs:
   format:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
           ref: ${{ github.head_ref }}
           fetch-depth: 2
 
-    - name: Rename and commit files
-      run: |
-        # Get a list of files changed in the latest commit
-        changed_files=$(git diff --name-only HEAD~1 HEAD)
+      - name: Rename and commit files
+        run: |
+          # Get a list of files changed in the latest commit
+          changed_files=$(git diff --name-only HEAD~1 HEAD)
 
-        # Debug: Print changed files
-        echo "Changed files:"
-        echo "$changed_files"
-        echo "------"
+          # Define the base path for the files
+          base_path="LeetCode/Java"
 
-        # Set IFS to newline for processing filenames with spaces
-        IFS=$'\n'
+          # Define the default extension
+          default_extension="java"
 
-        # Track whether any file was renamed
-        file_renamed=false
+          # Debug: Print changed files
+          echo "Changed files:"
+          echo "$changed_files"
+          echo "------"
 
-        for file in $changed_files; do
-          echo "Processing: $file" # Debug output
+          # Set IFS to newline for processing filenames with spaces
+          IFS=$'\n'
 
-          # Check if file exists
-          if [[ ! -f $file ]]; then
-            echo "Skipping $file as it does not exist." # Debug output
-            continue
-          fi
+          # Track whether any file was renamed
+          file_renamed=false
 
-          # Only process files in the 'java' directory
-          if [[ $file != LeetCode/Java/* ]]; then
-            # echo "Skipping $file as it's not in the 'java' directory." # Debug output
-            continue
-          fi
+          for file in $changed_files; do
+            echo "Processing: $file" # Debug output
 
-          # Extract just the filename from the path
-          filename=$(basename "$file")
-
-          # Skip files ending with .java
-          if [[ $filename == *.java || $filename == *.md ]]; then
-            echo "Skipping $file as it ends with .java or .md." # Debug output
-            continue
-          fi
-
-          # Check if the file matches the desired pattern
-          if [[ $filename =~ ^([0-9]+)\.\ (.*)$ ]]; then
-            number=$(printf "%04d" ${BASH_REMATCH[1]})
-            name=${BASH_REMATCH[2]}
-            newFilename="${number}. ${name}.java"
-
-            # Construct the new path
-            newPath="java/$newFilename"
-
-            if [[ "$file" != "$newPath" ]]; then
-              echo "Renaming $file to $newPath" # Debug output
-              mv "$file" "$newPath"
-              git add "$newPath"
-              file_renamed=true
-            else
-              echo "$file is already correctly named." # Debug output
+            # Check if file exists
+            if [[ ! -f $file ]]; then
+              echo "Skipping $file as it does not exist." # Debug output
+              continue
             fi
-          else
-            echo "$file does not match the desired pattern." # Debug output
+
+            # Only process files in the 'java' directory
+            if [[ $file != LeetCode/Java/* ]]; then
+              # echo "Skipping $file as it's not in the 'java' directory." # Debug output
+              continue
+            fi
+
+            # Extract just the filename from the path
+            filename=$(basename "$file")
+            
+            # Extract the file extension
+            extension="${filename##*.}"
+            if [[ "$filename" == "$extension" ]]; then
+                # No extension found, use default extension
+                extension="$default_extension"
+            fi
+
+            # Check if the file matches the desired pattern
+            if [[ $filename =~ ^([0-9]+)\.\ (.*)\..$ ]]; then
+              number=$(printf "%04d" ${BASH_REMATCH[1]})
+              name=${BASH_REMATCH[2]}
+              newFilename="${number}. ${name}.${extension}"
+
+              # Construct the new path
+              newPath="$base_path/$newFilename"
+
+              if [[ "$file" != "$newPath" ]]; then
+                echo "Renaming $file to $newPath" # Debug output
+                mv "$file" "$newPath"
+                git add "$newPath"
+                file_renamed=true
+              else
+                echo "$file is already correctly named." # Debug output
+              fi
+            else
+              echo "$file does not match the desired pattern." # Debug output
+            fi
+          done
+
+          # Commit with the modified filenames if any file was renamed
+          if [[ $file_renamed == true ]]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git add -A
+            git commit -m "Renamed files for formatting" -m "$(git diff --cached --name-only)"
+            git push
           fi
-        done
 
-        # Commit with the modified filenames if any file was renamed
-        if [[ $file_renamed == true ]]; then
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add -A
-          git commit -m "Renamed files for formatting" -m "$(git diff --cached --name-only)"
-          git push
-        fi
+          # Reset IFS to its default value
+          unset IFS
 
-        # Reset IFS to its default value
-        unset IFS
-
-      # - name: Commit changes
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git add -A
-      #     git commit -m "Format filenames in java folder" || echo "No changes to commit"
-      #     git push
+        # - name: Commit changes
+        #   run: |
+        #     git config --local user.email "action@github.com"
+        #     git config --local user.name "GitHub Action"
+        #     git add -A
+        #     git commit -m "Format filenames in java folder" || echo "No changes to commit"
+        #     git push
