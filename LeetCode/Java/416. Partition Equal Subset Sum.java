@@ -37,6 +37,7 @@ class Solution {
         return false;
     }
 }
+
 // [Ming] Initial set method
 // class Solution {
 //     public boolean canPartition(int[] nums) {
