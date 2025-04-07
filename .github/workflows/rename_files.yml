@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "/**"
+      - "!.github/**"
 
 jobs:
   format:
@@ -44,11 +45,11 @@ jobs:
               continue
             fi
 
-            # Only process files in the 'java' directory
-            if [[ $file != LeetCode/Java/* ]]; then
-              # echo "Skipping $file as it's not in the 'java' directory." # Debug output
-              continue
-            fi
+            # # Only process files in the 'java' directory
+            # if [[ $file != LeetCode/Java/* ]]; then
+            #   # echo "Skipping $file as it's not in the 'java' directory." # Debug output
+            #   continue
+            # fi
 
             # Extract the directory and filename
             dir=$(dirname "$file")
