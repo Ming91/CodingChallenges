@@ -1,0 +1,115 @@
+name: Format Filenames
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight
+  workflow_dispatch:      # Manual trigger
+  push:
+    branches:
+      - main
+      - 'feature/**'
+    paths:
+      - "**"
+      - "!.github/**"
+
+# Prevent concurrent runs of the same workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Debug Information
+        run: |
+          echo "Current branch: ${{ github.ref }}"
+          echo "Workflow file: ${{ github.workflow }}"
+          echo "Changed files:"
+          git diff --name-only HEAD~1 HEAD
+
+      - name: Format filenames
+        run: |
+          # Define extension mappings
+          declare -A extensions
+          extensions["Java"]=".java"
+          extensions["Clang"]=".cpp"
+          extensions["Python"]=".py"
+
+          # Get changed files
+          changed_files=$(git diff --name-only HEAD~1 HEAD)
+          
+          # Arrays to store modified files
+          declare -a renamed_files=()
+          declare -a removed_files=()
+          
+          IFS=$'\n'
+          
+          # Process files
+          for file in $changed_files; do
+            if [[ ! -f $file ]] || [[ $file == *.md ]]; then
+              continue
+            fi
+
+            dir=$(dirname "$file")
+            filename=$(basename "$file")
+            folder=$(basename "$dir")
+            modified=false
+            
+            # Step 1: Pad numbers
+            if [[ $filename =~ ^([0-9]+)\.(.*)$ ]]; then
+              original_number=${BASH_REMATCH[1]}
+              number=$(printf "%04d" $((10#$original_number)))
+              rest="${BASH_REMATCH[2]}"
+              
+              # Step 2: Fix extension if needed
+              if [[ -n "${extensions[$folder]}" ]]; then
+                correct_ext="${extensions[$folder]}"
+                base_name="${rest%.*}"
+                newFilename="${number}. ${base_name}${correct_ext}"
+              else
+                newFilename="${number}${rest}"
+              fi
+              
+              newPath="$dir/$newFilename"
+              
+              if [[ "$file" != "$newPath" ]]; then
+                echo "Renaming $file to $newPath"
+                mv "$file" "$newPath"
+                renamed_files+=("$newPath")
+                removed_files+=("$file")
+                modified=true
+              fi
+            fi
+          done
+
+          # Batch git operations
+          if [ ${#renamed_files[@]} -gt 0 ]; then
+            # Configure git
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            
+            # Remove old files and add new ones in a single operation
+            if [ ${#removed_files[@]} -gt 0 ]; then
+              git rm "${removed_files[@]}" || true
+            fi
+            git add "${renamed_files[@]}"
+            
+            # Commit with detailed message
+            git commit -m "Format filenames" -m "Changes made:" -m "$(printf '%s\n' "${renamed_files[@]}")"
+            git push
+          fi
+
+          unset IFS
+
+      - name: Cleanup
+        if: always()
+        run: |
+          echo "Cleanup completed"
+          echo "Total files processed: $(git diff --name-only HEAD~1 HEAD | wc -l)"
