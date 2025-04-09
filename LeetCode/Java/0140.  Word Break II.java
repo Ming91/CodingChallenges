@@ -32,17 +32,17 @@ class Solution {
         return ans;
     }
 
-    void backtrack(List<List<Integer>> ansLists, List<Integer> prevList, int start) {
+    void backtrack(List<List<Integer>> ansLists, List<Integer> currList, int start) {
+        // [GPT] Better method to avoid creating a new list every time
         if (start == n) {
-            // System.out.println(prevList);
-            ansLists.add(prevList);
+            ansLists.add(new ArrayList<>(currList));
             return;
         }
         List<Integer> res = trie.search(s, start);
         for (int i : res) {
-            List<Integer> currList = new ArrayList<>(prevList);
             currList.add(i);
             backtrack(ansLists, currList, start + wordDict.get(i).length());
+            currList.remove(currList.size() - 1); // Backtrack
         }
     }
 
