@@ -72,7 +72,7 @@ jobs:
               if [[ -n "${extensions[$folder]}" ]]; then
                 correct_ext="${extensions[$folder]}"
                 base_name="${rest%.*}"
-                newFilename="${number}.${base_name}${correct_ext}"
+                newFilename="${number}. ${base_name}${correct_ext}"
               else
                 newFilename="${number}${rest}"
               fi
